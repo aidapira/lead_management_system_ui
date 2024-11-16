@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const LeadsList = () => {
   // Example leads data, which would eventually come from an API.
@@ -26,6 +27,9 @@ const LeadsList = () => {
         >
           Sort by Score ({sortAsc ? 'Ascending' : 'Descending'})
         </button>
+        <Link to="/inquiries" className="bg-green-500 text-white px-4 py-2 rounded">
+            Submit Inquiry
+        </Link>
       </div>
       <table className="min-w-full bg-white border border-gray-200 shadow-md rounded">
         <thead>
