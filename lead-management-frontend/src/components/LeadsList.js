@@ -1,25 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 const LeadsList = () => {
-  // Example leads data, which would eventually come from an API.
+  // Mock lead data
   const [leads, setLeads] = useState([
-    { id: 1, name: 'John Doe', email: 'johndoe@example.com', score: 45 },
-    { id: 2, name: 'Jane Smith', email: 'janesmith@example.com', score: 60 },
-    { id: 3, name: 'Mike Johnson', email: 'mikejohnson@example.com', score: 30 },
+    { id: 1, name: 'John Doe', email: 'john@example.com', score: 80 },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', score: 50 },
+    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', score: 90 },
   ]);
+
   const [sortAsc, setSortAsc] = useState(true);
 
-  // Sort leads by score when sortAsc state changes
+  // Mock score updates (Simulate real-time updates)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) => ({
+          ...lead,
+          score: lead.score + Math.floor(Math.random() * 10 - 5), // Random score adjustment
+        }))
+      );
+    }, 5000); // Update every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Sort leads by score
   const sortedLeads = [...leads].sort((a, b) =>
     sortAsc ? a.score - b.score : b.score - a.score
   );
 
-  const toggleSortOrder = () => setSortAsc(!sortAsc);
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortAsc((prev) => !prev);
+  };
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4">Leads List</h2>
+      <h2 className="text-2xl font-semibold mb-4">Lead Dashboard</h2>
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={toggleSortOrder}
@@ -27,30 +44,36 @@ const LeadsList = () => {
         >
           Sort by Score ({sortAsc ? 'Ascending' : 'Descending'})
         </button>
-        <Link to="/inquiries" className="bg-green-500 text-white px-4 py-2 rounded">
-            Submit Inquiry
-        </Link>
       </div>
-      <table className="min-w-full bg-white border border-gray-200 shadow-md rounded">
+      <table className="w-full border-collapse bg-white shadow-md rounded">
         <thead>
           <tr>
-            <th className="px-4 py-2 text-left border-b">Name</th>
-            <th className="px-4 py-2 text-left border-b">Email</th>
-            <th className="px-4 py-2 text-left border-b">Score</th>
-            <th className="px-4 py-2 border-b">Actions</th>
+            <th className="border p-4 text-left">Name</th>
+            <th className="border p-4 text-left">Email</th>
+            <th className="border p-4 text-left">Score</th>
+            <th className="border p-4 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {sortedLeads.map((lead) => (
-            <tr key={lead.id} className="hover:bg-gray-100">
-              <td className="px-4 py-2 border-b">{lead.name}</td>
-              <td className="px-4 py-2 border-b">{lead.email}</td>
-              <td className="px-4 py-2 border-b">{lead.score}</td>
-              <td className="px-4 py-2 border-b">
-                <button className="bg-green-500 text-white px-3 py-1 rounded mr-2">
+            <tr
+              key={lead.id}
+              className={`border ${
+                lead.score >= 75
+                  ? 'bg-green-100'
+                  : lead.score >= 50
+                  ? 'bg-yellow-100'
+                  : 'bg-red-100'
+              }`}
+            >
+              <td className="border p-4">{lead.name}</td>
+              <td className="border p-4">{lead.email}</td>
+              <td className="border p-4">{lead.score}</td>
+              <td className="border p-4">
+                <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
                   View
                 </button>
-                <button className="bg-gray-500 text-white px-3 py-1 rounded">
+                <button className="bg-green-500 text-white px-3 py-1 rounded">
                   Edit
                 </button>
               </td>
