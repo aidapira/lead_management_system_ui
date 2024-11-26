@@ -3,37 +3,48 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginSchema = Yup.object().shape({
-  usernameOrEmail: Yup.string().required("Username or Email is required"),
+  email: Yup.string().required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post("/api/login", values);
+      console.log('values: ', values)
+      const response = await axios.post("http://localhost:5001/auth/login", values);
       console.log("Login successful:", response.data);
+
+      // Store the token securely
+      localStorage.setItem("authToken", response.data.token);
+
+      // Redirect to dashboard
+      navigate("/leads");
     } catch (error) {
-      console.error("Error logging in:", error.response.data);
+      console.error("Login error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Login failed");
     }
   };
 
   return (
     <Formik
-      initialValues={{ usernameOrEmail: "", password: "" }}
+      initialValues={{ email: "", password: "" }}
       validationSchema={LoginSchema}
       onSubmit={handleSubmit}
     >
       <Form className="space-y-4">
         <div>
-          <label className="block text-gray-600">Username or Email</label>
+          <label className="block text-gray-600">Email</label>
           <Field
-            name="usernameOrEmail"
+            name="email"
             type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <ErrorMessage name="usernameOrEmail" component="div" className="text-red-500 text-sm" />
+          <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
         </div>
 
         <div>

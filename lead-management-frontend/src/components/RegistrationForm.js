@@ -3,6 +3,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegistrationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -16,12 +17,21 @@ const RegistrationSchema = Yup.object().shape({
 });
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
+
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post("/api/register", values);
+      const { confirmPassword, ...payload } = values; // Exclude confirmPassword from API payload
+      const response = await axios.post("http://localhost:5001/auth/register", payload);
+      
       console.log("Registration successful:", response.data);
+
+      // Optionally: Auto-login or notify the user
+      alert("Registration successful! You can now log in.");
+      navigate("/");
     } catch (error) {
-      console.error("Error registering:", error.response.data);
+      console.error("Error registering:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Registration failed. Please try again.");
     }
   };
 
