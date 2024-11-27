@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import LeadsList from './components/LeadsList';
-import InquiryForm from './components/InquiryForm';
 import LeadForm from "./components/LeadForm";
+import InquiryPage from "./pages/InquiryPage";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/leads" element={<LeadsList />} />
-        <Route path="/inquiries" element={<InquiryForm />} />
+        <Route path="/inquiries" element={<InquiryPage />} />
         <Route path="/add-lead" element={<LeadForm />} />
         <Route path="/edit-lead/:leadId" element={<LeadForm />} />
       </Routes>

@@ -1,92 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
 
-const InquiryForm = () => {
-  // Sample leads data (replace with API fetch when backend is ready)
-  const leads = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Mike Johnson' },
-  ];
+const InquiryForm = ({ onInquirySubmit }) => {
+  const [leadId, setLeadId] = useState("");
+  const [inquiry, setInquiry] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const [selectedLead, setSelectedLead] = useState('');
-  const [message, setMessage] = useState('');
-  const [confirmation, setConfirmation] = useState('');
-  const [errors, setErrors] = useState({});
-
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let validationErrors = {};
+    setIsSubmitting(true);
+    setError("");
 
-    if (!selectedLead) validationErrors.lead = 'Please select a lead.';
-    if (!message) validationErrors.message = 'Message content is required.';
+    try {
+      const response = await axios.post(`http://localhost:5001/leads/${leadId}/inquiry`, {
+        message: inquiry,
+      });
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+      // Call the parent function to update lead scores
+      onInquirySubmit(response.data.updatedLead);
+      setLeadId("");
+      setInquiry("");
+      alert("Inquiry submitted successfully!");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to submit inquiry.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Reset form and show confirmation
-    setErrors({});
-    setConfirmation('Inquiry submitted successfully!');
-    setSelectedLead('');
-    setMessage('');
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4">Submit an Inquiry</h2>
-      {confirmation && (
-        <div className="bg-green-100 text-green-700 p-4 mb-4 rounded">
-          {confirmation}
-        </div>
-      )}
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
+    <div className="container mx-auto p-6 bg-white shadow-md rounded">
+      <h2 className="text-2xl font-semibold mb-4">Submit Inquiry</h2>
+      <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="lead" className="block text-gray-700 font-semibold mb-2">
-            Select Lead:
+          <label className="block text-gray-700 mb-2" htmlFor="leadId">
+            Lead ID
           </label>
-          <select
-            id="lead"
-            value={selectedLead}
-            onChange={(e) => setSelectedLead(e.target.value)}
-            className={`w-full p-2 border rounded ${
-              errors.lead ? 'border-red-500' : 'border-gray-300'
-            }`}
-          >
-            <option value="">-- Select a Lead --</option>
-            {leads.map((lead) => (
-              <option key={lead.id} value={lead.id}>
-                {lead.name}
-              </option>
-            ))}
-          </select>
-          {errors.lead && (
-            <p className="text-red-500 text-sm mt-1">{errors.lead}</p>
-          )}
+          <input
+            id="leadId"
+            type="text"
+            value={leadId}
+            onChange={(e) => setLeadId(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
         <div className="mb-4">
-          <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
-            Message:
+          <label className="block text-gray-700 mb-2" htmlFor="inquiry">
+            Inquiry
           </label>
           <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows="4"
-            className={`w-full p-2 border rounded ${
-              errors.message ? 'border-red-500' : 'border-gray-300'
-            }`}
-          ></textarea>
-          {errors.message && (
-            <p className="text-red-500 text-sm mt-1">{errors.message}</p>
-          )}
+            id="inquiry"
+            value={inquiry}
+            onChange={(e) => setInquiry(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          disabled={isSubmitting}
         >
-          Submit Inquiry
+          {isSubmitting ? "Submitting..." : "Submit Inquiry"}
         </button>
       </form>
     </div>
