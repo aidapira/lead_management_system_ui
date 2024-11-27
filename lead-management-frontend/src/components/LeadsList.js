@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LeadsList = () => {
-  // Mock lead data
-  const [leads, setLeads] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', score: 80 },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', score: 50 },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', score: 90 },
-  ]);
-
+  const [leads, setLeads] = useState([]);
   const [sortAsc, setSortAsc] = useState(true);
+  const navigate = useNavigate(); // React Router hook for navigation
 
-  // Mock score updates (Simulate real-time updates)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLeads((prevLeads) =>
-        prevLeads.map((lead) => ({
-          ...lead,
-          score: lead.score + Math.floor(Math.random() * 10 - 5), // Random score adjustment
-        }))
-      );
-    }, 5000); // Update every 5 seconds
+  // Fetch leads from the backend
+  const fetchLeads = async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/leads");
+      setLeads(response.data);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  // Delete lead by ID and update the list
+  const deleteLead = async (leadId) => {
+    if (!window.confirm("Are you sure you want to delete this lead?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5001/leads/${leadId}`);
+      // Dynamically remove the deleted lead from the list
+      setLeads((prevLeads) => prevLeads.filter((lead) => lead.id !== leadId));
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      alert("Failed to delete lead. Please try again.");
+    }
+  };
 
   // Sort leads by score
   const sortedLeads = [...leads].sort((a, b) =>
@@ -34,6 +41,10 @@ const LeadsList = () => {
     setSortAsc((prev) => !prev);
   };
 
+  useEffect(() => {
+    fetchLeads();
+  }, [leads]);
+
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">Lead Dashboard</h2>
@@ -42,7 +53,13 @@ const LeadsList = () => {
           onClick={toggleSortOrder}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Sort by Score ({sortAsc ? 'Ascending' : 'Descending'})
+          Sort by Score ({sortAsc ? "Ascending" : "Descending"})
+        </button>
+        <button
+          onClick={() => navigate("/add-lead")}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Add Lead
         </button>
       </div>
       <table className="w-full border-collapse bg-white shadow-md rounded">
@@ -57,24 +74,24 @@ const LeadsList = () => {
         <tbody>
           {sortedLeads.map((lead) => (
             <tr
-              key={lead.id}
+              key={lead._id}
               className={`border ${
                 lead.score >= 75
-                  ? 'bg-green-100'
+                  ? "bg-green-100"
                   : lead.score >= 50
-                  ? 'bg-yellow-100'
-                  : 'bg-red-100'
+                  ? "bg-yellow-100"
+                  : "bg-red-100"
               }`}
             >
               <td className="border p-4">{lead.name}</td>
               <td className="border p-4">{lead.email}</td>
               <td className="border p-4">{lead.score}</td>
               <td className="border p-4">
-                <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
-                  View
-                </button>
-                <button className="bg-green-500 text-white px-3 py-1 rounded">
-                  Edit
+                <button
+                  onClick={() => deleteLead(lead._id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded"
+                >
+                  Delete
                 </button>
               </td>
             </tr>
