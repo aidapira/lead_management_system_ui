@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import API_BASE_URL from "./config";
+import API_BASE_URL from "../config";
 
 const LeadForm = () => {
   const [lead, setLead] = useState({ name: "", email: "", phone: 0, status: 'New' });

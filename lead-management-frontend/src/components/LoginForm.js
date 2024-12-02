@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import API_BASE_URL from "./config";
+import API_BASE_URL from "../config";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().required("Email is required"),
