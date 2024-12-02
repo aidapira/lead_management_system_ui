@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "./config";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().required("Email is required"),
@@ -16,7 +17,7 @@ const LoginForm = () => {
   const handleSubmit = async (values) => {
     try {
       console.log('values: ', values)
-      const response = await axios.post("http://localhost:5001/auth/login", values);
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, values);
       console.log("Login successful:", response.data);
 
       // Store the token securely

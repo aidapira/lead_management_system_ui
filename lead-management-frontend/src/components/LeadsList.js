@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "./config";
 
 const LeadsList = () => {
   const [leads, setLeads] = useState([]);
@@ -11,7 +12,7 @@ const LeadsList = () => {
   // Fetch leads from the backend
   const fetchLeads = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/leads");
+      const response = await axios.get(`${API_BASE_URL}/leads`);
       setLeads(response.data);
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -23,7 +24,7 @@ const LeadsList = () => {
     if (!window.confirm("Are you sure you want to delete this lead?")) return;
 
     try {
-      await axios.delete(`http://localhost:5001/leads/${leadId}`);
+      await axios.delete(`${API_BASE_URL}/leads/${leadId}`);
       // Dynamically remove the deleted lead from the list
       setLeads((prevLeads) => prevLeads.filter((lead) => lead._id !== leadId));
     } catch (error) {

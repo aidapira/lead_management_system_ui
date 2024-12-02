@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "./config";
 
 const LeadForm = () => {
   const [lead, setLead] = useState({ name: "", email: "", phone: 0, status: 'New' });
@@ -11,7 +12,7 @@ const LeadForm = () => {
   useEffect(() => {
     if (leadId) {
       axios
-        .get(`http://localhost:5001/leads/${leadId}`)
+        .get(`${API_BASE_URL}/leads/${leadId}`)
         .then((response) => setLead(response.data))
         .catch((error) => console.error("Error fetching lead:", error));
     }
@@ -22,10 +23,10 @@ const LeadForm = () => {
     e.preventDefault();
     try {
       if (leadId) {
-        await axios.put(`http://localhost:5001/leads/${leadId}`, lead);
+        await axios.put(`${API_BASE_URL}/leads/${leadId}`, lead);
       } else {
         console.log(lead)
-        await axios.post("http://localhost:5001/leads", lead);
+        await axios.post("${API_BASE_URL}/leads", lead);
       }
       navigate("/leads"); // Redirect to leads list after saving
     } catch (error) {

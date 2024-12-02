@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "./config";
 
 const InquiryForm = ({ onInquirySubmit }) => {
   const [leadId, setLeadId] = useState("");
@@ -13,7 +14,7 @@ const InquiryForm = ({ onInquirySubmit }) => {
     setError("");
 
     try {
-      const response = await axios.post(`http://localhost:5001/leads/${leadId}/inquiry`, {
+      const response = await axios.post(`${API_BASE_URL}/leads/${leadId}/inquiry`, {
         message: inquiry,
       });
 
