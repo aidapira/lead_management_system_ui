@@ -107,7 +107,7 @@ const LeadsList = () => {
                     : "bg-red-100"
                 }`}
             >
-              <td className="border p-4">{lead.name}</td>
+              <td className="border p-4">{`${lead.name} - (${lead._id})`}</td>
               <td className="border p-4">{lead.email}</td>
               <td className="border p-4">{lead.score}</td>
               <td className="border p-4">
