@@ -26,7 +26,7 @@ const LeadForm = () => {
         await axios.put(`${API_BASE_URL}/leads/${leadId}`, lead);
       } else {
         console.log(lead)
-        await axios.post("${API_BASE_URL}/leads", lead);
+        await axios.post(`${API_BASE_URL}/leads`, lead);
       }
       navigate("/leads"); // Redirect to leads list after saving
     } catch (error) {
